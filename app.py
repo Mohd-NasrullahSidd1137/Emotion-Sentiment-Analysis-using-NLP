@@ -2,26 +2,27 @@ import streamlit as st
 import joblib
 import pandas as pd
 
-# ----------------------------------
-# Page Configuration
-# ----------------------------------
+# ===========================================================
+# PAGE CONFIGURATION
+# ===========================================================
 
 st.set_page_config(
     page_title="Emotion Sentiment Analysis",
     page_icon="😊",
-    layout="centered"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# ----------------------------------
-# Load Model
-# ----------------------------------
+# ===========================================================
+# LOAD MODEL
+# ===========================================================
 
 model = joblib.load("emotion_model.pkl")
 vectorizer = joblib.load("bow_vectorizer.pkl")
 
-# ----------------------------------
-# Emotion Mapping
-# ----------------------------------
+# ===========================================================
+# EMOTION LABELS
+# ===========================================================
 
 emotion_map = {
     0: ("😢", "Sadness"),
@@ -32,129 +33,231 @@ emotion_map = {
     5: ("😊", "Joy")
 }
 
-# ----------------------------------
-# Custom CSS
-# ----------------------------------
-
 st.markdown("""
 <style>
 
+/* ===========================
+BACKGROUND
+=========================== */
+
 .stApp{
-background:linear-gradient(135deg,#0f172a,#1e293b,#334155);
+background:linear-gradient(135deg,#0F172A,#1E293B,#334155);
 }
+
+/* ===========================
+TITLE
+=========================== */
 
 .title{
 text-align:center;
-font-size:44px;
+font-size:55px;
 font-weight:bold;
 color:white;
+margin-top:10px;
 }
 
 .subtitle{
 text-align:center;
-font-size:18px;
-color:#cbd5e1;
+font-size:20px;
+color:#CBD5E1;
 margin-bottom:30px;
 }
 
+/* ===========================
+RESULT CARD
+=========================== */
+
 .result-box{
+
 background:white;
-padding:25px;
-border-radius:18px;
+
+padding:30px;
+
+border-radius:20px;
+
+box-shadow:0px 8px 25px rgba(0,0,0,.35);
+
 text-align:center;
-box-shadow:0px 5px 20px rgba(0,0,0,.3);
-margin-top:20px;
+
+margin-top:25px;
+
 }
 
 .result-box h1{
-color:#1e293b;
-font-size:40px;
+
+font-size:60px;
+
 }
 
 .result-box h2{
-color:#2563eb;
+
+font-size:34px;
+
+color:#2563EB;
+
 }
 
-.footer{
-text-align:center;
-color:white;
-margin-top:40px;
-font-size:16px;
-}
+/* ===========================
+BUTTON
+=========================== */
 
 .stButton>button{
+
 width:100%;
+
 height:55px;
-font-size:18px;
+
+font-size:20px;
+
 font-weight:bold;
-border-radius:12px;
-background:linear-gradient(to right,#2563eb,#06b6d4);
+
+background:#2563EB;
+
 color:white;
+
+border-radius:12px;
+
 border:none;
+
 }
 
 .stButton>button:hover{
-background:linear-gradient(to right,#1d4ed8,#0891b2);
+
+background:#1D4ED8;
+
 color:white;
+
+}
+
+/* ===========================
+TEXT AREA
+=========================== */
+
+textarea{
+
+font-size:18px !important;
+
+}
+
+/* ===========================
+HEADINGS
+=========================== */
+
+h1,h2,h3,h4,h5,h6,label,p{
+
+color:white !important;
+
+}
+
+/* ===========================
+SIDEBAR
+=========================== */
+
+[data-testid="stSidebar"]{
+
+background:#F8FAFC;
+
 }
 
 </style>
-""", unsafe_allow_html=True)
+""",unsafe_allow_html=True)
 
-# ----------------------------------
-# Sidebar
-# ----------------------------------
+# ===========================================================
+# SIDEBAR
+# ===========================================================
 
 st.sidebar.title("📌 Project Information")
 
 st.sidebar.success("Emotion Sentiment Analysis")
 
-st.sidebar.write("### Model Details")
+st.sidebar.markdown("---")
 
-st.sidebar.write("""
-- **Algorithm:** Logistic Regression
-- **Vectorizer:** Bag of Words
-- **Accuracy:** 88%
-- **Classes:** 6
-""")
+st.sidebar.subheader("🤖 Model")
+
+st.sidebar.write("**Algorithm:** Logistic Regression")
+
+st.sidebar.write("**Vectorizer:** Bag of Words")
+
+st.sidebar.write("**Accuracy:** 88%")
+
+st.sidebar.write("**Classes:** 6")
 
 st.sidebar.markdown("---")
 
-st.sidebar.write("### Try These Examples")
+st.sidebar.subheader("📝 Try These Examples")
 
 st.sidebar.code("I got selected in my interview.")
+
 st.sidebar.code("I love my parents.")
-st.sidebar.code("I am very angry.")
-st.sidebar.code("I lost my wallet.")
+
+st.sidebar.code("I lost my wallet yesterday.")
+
 st.sidebar.code("I am scared of snakes.")
-st.sidebar.code("Wow! I can't believe it!")
 
-# ----------------------------------
-# Title
-# ----------------------------------
+st.sidebar.code("Wow! I can't believe this!")
 
-st.markdown("<div class='title'>😊 Emotion Sentiment Analysis</div>", unsafe_allow_html=True)
+st.sidebar.code("I am very angry today.")
 
-st.markdown("<div class='subtitle'>Machine Learning + NLP + Streamlit</div>", unsafe_allow_html=True)
+st.sidebar.markdown("---")
 
-# ----------------------------------
-# Input
-# ----------------------------------
+st.sidebar.info("Developed by Mohd Nasrullah Siddiqui")
+
+# ===========================================================
+# MAIN TITLE
+# ===========================================================
+
+st.markdown("""
+<div class='title'>
+😊 Emotion Sentiment Analysis
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div class='subtitle'>
+Detect Human Emotions using <b>Machine Learning</b>, <b>Natural Language Processing (NLP)</b> and <b>Streamlit</b>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("---")
+
+# ===========================================================
+# INPUT SECTION
+# ===========================================================
+
+st.subheader("✍️ Enter Your Text")
 
 user_text = st.text_area(
-    "✍ Enter your sentence",
+    "",
     height=180,
-    placeholder="Example: I am very happy today because I got selected."
+    placeholder="Example: I am very happy because I got selected in my interview."
 )
 
-# ----------------------------------
-# Prediction
-# ----------------------------------
+col1, col2 = st.columns([1,1])
 
-if st.button("🚀 Predict Emotion"):
+with col1:
+
+    predict = st.button(
+        "🚀 Predict Emotion",
+        use_container_width=True
+    )
+
+with col2:
+
+    if st.button(
+        "🗑️ Clear Text",
+        use_container_width=True
+    ):
+        st.rerun()
+
+# ===========================================================
+# PREDICTION
+# ===========================================================
+
+if predict:
 
     if user_text.strip() == "":
-        st.warning("Please enter some text.")
+
+        st.warning("⚠️ Please enter some text.")
 
     else:
 
@@ -166,83 +269,124 @@ if st.button("🚀 Predict Emotion"):
 
         st.markdown(f"""
         <div class='result-box'>
+
         <h1>{emoji}</h1>
+
         <h2>{emotion}</h2>
-        <p><b>The model predicts that the given text expresses <span style='color:#2563eb'>{emotion}</span>.</b></p>
+
+        <p style="font-size:18px;color:black;">
+        The model predicts that the given text expresses
+        <b>{emotion}</b>.
+        </p>
+
         </div>
+
         """, unsafe_allow_html=True)
+
+        # =======================================
+        # CONFIDENCE SCORE
+        # =======================================
 
         if hasattr(model, "predict_proba"):
 
-            probs = model.predict_proba(vector)[0]
+            probabilities = model.predict_proba(vector)[0]
 
-            confidence = probs.max() * 100
+            confidence = probabilities.max() * 100
 
-            st.write("## 📊 Confidence Score")
+            st.markdown("## 📊 Confidence Score")
 
             st.progress(int(confidence))
 
-            st.success(f"{confidence:.2f}%")
+            st.metric(
+                label="Model Confidence",
+                value=f"{confidence:.2f}%"
+            )
 
-            st.write("## 📈 Emotion Probabilities")
+        # ==========================================
+        # EMOTION PROBABILITIES
+        # ==========================================
 
-            labels = [
-                "😢 Sadness",
-                "😡 Anger",
-                "❤️ Love",
-                "😲 Surprise",
-                "😨 Fear",
-                "😊 Joy"
-            ]
+        st.markdown("## 📈 Emotion Probability")
 
-            df = pd.DataFrame({
-                "Emotion": labels,
-                "Probability (%)": (probs * 100).round(2)
-            })
+        labels = [
+            "😢 Sadness",
+            "😡 Anger",
+            "❤️ Love",
+            "😲 Surprise",
+            "😨 Fear",
+            "😊 Joy"
+        ]
 
-            st.dataframe(df, use_container_width=True)
+        df = pd.DataFrame({
+            "Emotion": labels,
+            "Probability (%)": (probabilities * 100).round(2)
+        })
 
-# ----------------------------------
-# About Project
-# ----------------------------------
+        st.dataframe(
+            df,
+            use_container_width=True,
+            hide_index=True
+        )
+
+        st.markdown("## 📊 Emotion Distribution")
+
+        chart_df = pd.DataFrame({
+            "Emotion": labels,
+            "Probability": probabilities
+        })
+
+        st.bar_chart(
+            chart_df,
+            x="Emotion",
+            y="Probability",
+            use_container_width=True
+        )
+
+# ==========================================================
+# ABOUT PROJECT
+# ==========================================================
+
+st.markdown("---")
 
 with st.expander("📖 About This Project"):
 
-    st.write("""
-### Emotion Sentiment Analysis using NLP
+    st.markdown("""
 
-This project predicts emotions from text using
-Natural Language Processing (NLP).
+### 🎯 Emotion Sentiment Analysis using NLP
 
-### Tech Stack
+This project predicts human emotions from text using
+Natural Language Processing.
+
+### 🚀 Technologies Used
 
 - Python
-- Scikit-Learn
+- NLP
 - Bag of Words
 - Logistic Regression
 - Streamlit
 
-### Supported Emotions
+### 😊 Supported Emotions
 
-- 😊 Joy
-- 😢 Sadness
-- 😡 Anger
-- 😨 Fear
-- ❤️ Love
-- 😲 Surprise
+- Joy
+- Sadness
+- Anger
+- Fear
+- Love
+- Surprise
 
-### Model Accuracy
+### 🎯 Model Accuracy
 
 **88%**
+
 """)
 
-# ----------------------------------
-# Footer
-# ----------------------------------
+st.markdown("---")
 
 st.markdown("""
-<hr>
-<div class='footer'>
+
+<div style='text-align:center;
+font-size:18px;
+color:white;'>
 
 Made with ❤️ using Streamlit
 
@@ -251,4 +395,5 @@ Made with ❤️ using Streamlit
 <b>Developed by Mohd Nasrullah Siddiqui</b>
 
 </div>
+
 """, unsafe_allow_html=True)
