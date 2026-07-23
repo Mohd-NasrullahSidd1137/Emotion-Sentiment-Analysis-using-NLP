@@ -2,9 +2,9 @@ import streamlit as st
 import joblib
 import pandas as pd
 
-# ===========================================================
+# ======================================================
 # PAGE CONFIGURATION
-# ===========================================================
+# ======================================================
 
 st.set_page_config(
     page_title="Emotion Sentiment Analysis",
@@ -13,25 +13,52 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ===========================================================
+# ======================================================
 # LOAD MODEL
-# ===========================================================
+# ======================================================
 
 model = joblib.load("emotion_model.pkl")
 vectorizer = joblib.load("bow_vectorizer.pkl")
 
-# ===========================================================
+# ======================================================
 # EMOTION LABELS
-# ===========================================================
+# ======================================================
 
 emotion_map = {
-    0: ("😢", "Sadness"),
-    1: ("😡", "Anger"),
-    2: ("❤️", "Love"),
-    3: ("😲", "Surprise"),
-    4: ("😨", "Fear"),
-    5: ("😊", "Joy")
+    0: {
+        "emoji": "😢",
+        "name": "Sadness"
+    },
+
+    1: {
+        "emoji": "😡",
+        "name": "Anger"
+    },
+
+    2: {
+        "emoji": "❤️",
+        "name": "Love"
+    },
+
+    3: {
+        "emoji": "😲",
+        "name": "Surprise"
+    },
+
+    4: {
+        "emoji": "😨",
+        "name": "Fear"
+    },
+
+    5: {
+        "emoji": "😊",
+        "name": "Joy"
+    }
 }
+
+# ======================================================
+# PREMIUM CSS
+# ======================================================
 
 st.markdown("""
 <style>
@@ -41,101 +68,77 @@ BACKGROUND
 =========================== */
 
 .stApp{
-background:linear-gradient(135deg,#0F172A,#1E293B,#334155);
+    background:linear-gradient(135deg,#0F172A,#1E293B,#334155);
 }
 
 /* ===========================
-TITLE
+REMOVE STREAMLIT HEADER
 =========================== */
 
-/* Sidebar Text */
-
-[data-testid="stSidebar"] * {
-    color: black !important;
+header{
+    visibility:hidden;
 }
 
-/* Expander Text */
-
-.streamlit-expanderHeader {
-    color: white !important;
-    font-weight: bold;
+footer{
+    visibility:hidden;
 }
 
-.streamlit-expanderContent {
-    color: white !important;
-}
-
-/* Markdown Text */
-
-.stMarkdown {
-    color: white !important;
-}
-
-/* Lists */
-
-ul, li {
-    color: white !important;
-}
-
-/* Table */
-
-table, th, td {
-    color: white !important;
-}
-
-/* DataFrame */
-
-[data-testid="stDataFrame"] {
-    color: black !important;
-}
+/* ===========================
+MAIN TITLE
+=========================== */
 
 .title{
-text-align:center;
-font-size:55px;
-font-weight:bold;
-color:white;
-margin-top:10px;
+    text-align:center;
+    font-size:52px;
+    font-weight:bold;
+    color:white;
+    margin-top:10px;
 }
 
 .subtitle{
-text-align:center;
-font-size:20px;
-color:#CBD5E1;
-margin-bottom:30px;
+    text-align:center;
+    font-size:20px;
+    color:#CBD5E1;
+    margin-bottom:35px;
 }
 
 /* ===========================
-RESULT CARD
+MAIN PAGE TEXT
 =========================== */
 
-.result-box{
-
-background:white;
-
-padding:30px;
-
-border-radius:20px;
-
-box-shadow:0px 8px 25px rgba(0,0,0,.35);
-
-text-align:center;
-
-margin-top:25px;
-
+h1,h2,h3,h4,h5,h6{
+    color:white !important;
 }
 
-.result-box h1{
-
-font-size:60px;
-
+p{
+    color:white !important;
 }
 
-.result-box h2{
+label{
+    color:white !important;
+}
 
-font-size:34px;
+li{
+    color:white !important;
+}
 
-color:#2563EB;
+ul{
+    color:white !important;
+}
 
+.stMarkdown{
+    color:white !important;
+}
+
+/* ===========================
+TEXT AREA
+=========================== */
+
+textarea{
+    background:white !important;
+    color:black !important;
+    font-size:18px !important;
+    border-radius:12px !important;
 }
 
 /* ===========================
@@ -144,49 +147,73 @@ BUTTON
 
 .stButton>button{
 
-width:100%;
+    width:100%;
 
-height:55px;
+    height:55px;
 
-font-size:20px;
+    border-radius:12px;
 
-font-weight:bold;
+    border:none;
 
-background:#2563EB;
+    font-size:18px;
 
-color:white;
+    font-weight:bold;
 
-border-radius:12px;
+    background:#2563EB;
 
-border:none;
+    color:white;
 
 }
 
 .stButton>button:hover{
 
-background:#1D4ED8;
+    background:#1D4ED8;
 
-color:white;
-
-}
-
-/* ===========================
-TEXT AREA
-=========================== */
-
-textarea{
-
-font-size:18px !important;
+    color:white;
 
 }
 
 /* ===========================
-HEADINGS
+RESULT CARD
 =========================== */
 
-h1,h2,h3,h4,h5,h6,label,p{
+.result-box{
 
-color:white !important;
+    background:white;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    text-align:center;
+
+    box-shadow:0px 0px 20px rgba(0,0,0,.30);
+
+    margin-top:25px;
+
+}
+
+.result-box h1{
+
+    font-size:70px;
+
+    color:black !important;
+
+}
+
+.result-box h2{
+
+    color:#2563EB !important;
+
+    font-size:36px;
+
+}
+
+.result-box p{
+
+    color:black !important;
+
+    font-size:18px;
 
 }
 
@@ -196,86 +223,178 @@ SIDEBAR
 
 [data-testid="stSidebar"]{
 
-background:#F8FAFC;
+    background:#F8FAFC;
+
+}
+
+/* Sidebar Text */
+
+[data-testid="stSidebar"] *{
+
+    color:black !important;
+
+}
+
+/* Sidebar Code */
+
+[data-testid="stSidebar"] code{
+
+    color:#2563EB !important;
+
+}
+
+/* ===========================
+EXPANDER
+=========================== */
+
+.streamlit-expanderHeader{
+
+    color:white !important;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+}
+
+.streamlit-expanderContent{
+
+    color:white !important;
+
+}
+
+/* ===========================
+DATAFRAME
+=========================== */
+
+[data-testid="stDataFrame"]{
+
+    background:white;
+
+    color:black !important;
+
+}
+
+/* ===========================
+METRIC
+=========================== */
+
+[data-testid="stMetricValue"]{
+
+    color:white !important;
+
+}
+
+[data-testid="stMetricLabel"]{
+
+    color:white !important;
+
+}
+
+/* ===========================
+PROGRESS TEXT
+=========================== */
+
+[data-testid="stProgressBar"]{
+
+    border-radius:10px;
+
+}
+
+/* ===========================
+FOOTER
+=========================== */
+
+.footer{
+
+    text-align:center;
+
+    color:white;
+
+    font-size:18px;
+
+    margin-top:30px;
 
 }
 
 </style>
-""",unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
-# ===========================================================
+# ======================================================
 # SIDEBAR
-# ===========================================================
+# ======================================================
 
-st.sidebar.title("📌 Project Information")
+with st.sidebar:
 
-st.sidebar.success("Emotion Sentiment Analysis")
+    st.title("📌 Project Information")
 
-st.sidebar.markdown("---")
+    st.success("Emotion Sentiment Analysis")
 
-st.sidebar.subheader("🤖 Model")
+    st.markdown("---")
 
-st.sidebar.write("**Algorithm:** Logistic Regression")
+    st.subheader("🤖 Model")
 
-st.sidebar.write("**Vectorizer:** Bag of Words")
+    st.write("**Algorithm:** Logistic Regression")
 
-st.sidebar.write("**Accuracy:** 88%")
+    st.write("**Vectorizer:** Bag of Words")
 
-st.sidebar.write("**Classes:** 6")
+    st.write("**Accuracy:** 88%")
 
-st.sidebar.markdown("---")
+    st.write("**Classes:** 6")
 
-st.sidebar.subheader("📝 Try These Examples")
+    st.markdown("---")
 
-st.sidebar.code("I got selected in my interview.")
+    st.subheader("📝 Try These Examples")
 
-st.sidebar.code("I love my parents.")
+    st.code("I got selected in my interview.")
 
-st.sidebar.code("I lost my wallet yesterday.")
+    st.code("I love my parents.")
 
-st.sidebar.code("I am scared of snakes.")
+    st.code("I lost my wallet yesterday.")
 
-st.sidebar.code("Wow! I can't believe this!")
+    st.code("I am scared of snakes.")
 
-st.sidebar.code("I am very angry today.")
+    st.code("Wow! I can't believe this!")
 
-st.sidebar.markdown("---")
+    st.code("I am very angry today.")
 
-st.sidebar.info("Developed by Mohd Nasrullah Siddiqui")
+    st.markdown("---")
 
-# ===========================================================
-# MAIN TITLE
-# ===========================================================
+    st.info("👨‍💻 Developed by Mohd Nasrullah Siddiqui")
+
+# ======================================================
+# HERO SECTION
+# ======================================================
 
 st.markdown("""
-<div class='title'>
+<div class="title">
 😊 Emotion Sentiment Analysis
 </div>
 """, unsafe_allow_html=True)
 
 st.markdown("""
-- Python
-- NLP
-- Bag of Words
-- Logistic Regression
-- Streamlit
-""")
+<div class="subtitle">
+Detect Human Emotions from Text using
+<b>Machine Learning</b> &
+<b>Natural Language Processing (NLP)</b>
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown("---")
 
-# ===========================================================
+# ======================================================
 # INPUT SECTION
-# ===========================================================
+# ======================================================
 
 st.subheader("✍️ Enter Your Text")
 
 user_text = st.text_area(
-    "",
-    height=180,
-    placeholder="Example: I am very happy because I got selected in my interview."
+    label="",
+    placeholder="Example: I got selected in my interview and I am feeling amazing!",
+    height=180
 )
 
-col1, col2 = st.columns([1,1])
+col1, col2 = st.columns(2)
 
 with col1:
 
@@ -286,70 +405,100 @@ with col1:
 
 with col2:
 
-    if st.button(
+    clear = st.button(
         "🗑️ Clear Text",
         use_container_width=True
-    ):
-        st.rerun()
+    )
 
-# ===========================================================
+if clear:
+    st.rerun()
+
+# ======================================================
 # PREDICTION
-# ===========================================================
+# ======================================================
 
 if predict:
 
     if user_text.strip() == "":
 
-        st.warning("⚠️ Please enter some text.")
+        st.warning("⚠️ Please enter some text first.")
 
     else:
 
+        # Vectorize Input
         vector = vectorizer.transform([user_text])
 
-        prediction = model.predict(vector)[0]
+        # Prediction
+        prediction = int(model.predict(vector)[0])
 
-        emoji, emotion = emotion_map[int(prediction)]
+        emoji = emotion_map[prediction]["emoji"]
+
+        emotion = emotion_map[prediction]["name"]
+
+        # Confidence
+        probabilities = model.predict_proba(vector)[0]
+
+        confidence = probabilities.max() * 100
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # ===================================================
+        # RESULT CARD
+        # ===================================================
 
         st.markdown(f"""
-        <div class='result-box'>
+        <div class="result-box">
 
-        <h1>{emoji}</h1>
+            <h1>{emoji}</h1>
 
-        <h2>{emotion}</h2>
+            <h2>{emotion}</h2>
 
-        <p style="font-size:18px;color:black;">
-        The model predicts that the given text expresses
-        <b>{emotion}</b>.
-        </p>
+            <p>
+            The model predicts that the entered text expresses
+            <b>{emotion}</b>.
+            </p>
 
         </div>
 
         """, unsafe_allow_html=True)
 
-        # =======================================
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # ===================================================
         # CONFIDENCE SCORE
-        # =======================================
+        # ===================================================
 
-        if hasattr(model, "predict_proba"):
+        st.subheader("📊 Confidence Score")
 
-            probabilities = model.predict_proba(vector)[0]
+        st.progress(float(confidence / 100))
 
-            confidence = probabilities.max() * 100
+        col1, col2, col3 = st.columns(3)
 
-            st.markdown("## 📊 Confidence Score")
-
-            st.progress(int(confidence))
-
+        with col1:
             st.metric(
-                label="Model Confidence",
-                value=f"{confidence:.2f}%"
+                "Prediction",
+                emotion
             )
 
-        # ==========================================
-        # EMOTION PROBABILITIES
-        # ==========================================
+        with col2:
+            st.metric(
+                "Confidence",
+                f"{confidence:.2f}%"
+            )
 
-        st.markdown("## 📈 Emotion Probability")
+        with col3:
+            st.metric(
+                "Model",
+                "Logistic Regression"
+            )
+
+        # ======================================================
+        # EMOTION PROBABILITIES
+        # ======================================================
+
+        st.markdown("---")
+
+        st.subheader("📈 Emotion Probability")
 
         labels = [
             "😢 Sadness",
@@ -360,53 +509,52 @@ if predict:
             "😊 Joy"
         ]
 
-        df = pd.DataFrame({
+        probability_df = pd.DataFrame({
             "Emotion": labels,
             "Probability (%)": (probabilities * 100).round(2)
         })
 
         st.dataframe(
-            df,
+            probability_df,
             use_container_width=True,
             hide_index=True
         )
 
-        st.markdown("## 📊 Emotion Distribution")
+        # ======================================================
+        # BAR CHART
+        # ======================================================
 
-        chart_df = pd.DataFrame({
-            "Emotion": labels,
-            "Probability": probabilities
-        })
+        st.subheader("📊 Emotion Distribution")
+
+        chart_df = probability_df.set_index("Emotion")
 
         st.bar_chart(
-            chart_df,
-            x="Emotion",
-            y="Probability",
+            chart_df["Probability (%)"],
             use_container_width=True
         )
 
-# ==========================================================
+# ======================================================
 # ABOUT PROJECT
-# ==========================================================
+# ======================================================
 
 st.markdown("---")
 
-with st.expander("📖 About This Project"):
+with st.expander("📖 About This Project", expanded=False):
 
     st.markdown("""
 
-### 🎯 Emotion Sentiment Analysis using NLP
+### 🎯 Emotion Sentiment Analysis
 
-This project predicts human emotions from text using
-Natural Language Processing.
+This application predicts human emotions from text using
+Natural Language Processing (NLP) and Machine Learning.
 
-### 🚀 Technologies Used
+### 🛠 Technologies Used
 
 - Python
-- NLP
+- Streamlit
+- Scikit-Learn
 - Bag of Words
 - Logistic Regression
-- Streamlit
 
 ### 😊 Supported Emotions
 
@@ -417,26 +565,30 @@ Natural Language Processing.
 - Love
 - Surprise
 
-### 🎯 Model Accuracy
+### 📊 Model Accuracy
 
 **88%**
 
+### 👨‍💻 Developed By
+
+Mohd Nasrullah Siddiqui
+
 """)
+
+# ======================================================
+# FOOTER
+# ======================================================
 
 st.markdown("---")
 
 st.markdown("""
+<div class="footer">
 
-<div style='text-align:center;
-font-size:18px;
-color:white;'>
-
-Made with ❤️ using Streamlit
+Made with ❤️ using Python, Streamlit & Machine Learning
 
 <br><br>
 
-<b>Developed by Mohd Nasrullah Siddiqui</b>
+<b>© 2026 Mohd Nasrullah Siddiqui</b>
 
 </div>
-
 """, unsafe_allow_html=True)
