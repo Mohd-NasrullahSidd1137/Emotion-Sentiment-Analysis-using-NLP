@@ -254,8 +254,14 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("""
-<div class='subtitle'>
-Detect Human Emotions using <b>Machine Learning</b>, <b>Natural Language Processing (NLP)</b> and <b>Streamlit</b>
+<div style="color:white; font-size:18px;">
+
+✅ Python<br>
+✅ NLP<br>
+✅ Bag of Words<br>
+✅ Logistic Regression<br>
+✅ Streamlit
+
 </div>
 """, unsafe_allow_html=True)
 
