@@ -1,9 +1,11 @@
 import streamlit as st
 import joblib
+import pandas as pd
 
 # ----------------------------------
 # Page Configuration
 # ----------------------------------
+
 st.set_page_config(
     page_title="Emotion Sentiment Analysis",
     page_icon="😊",
@@ -13,12 +15,14 @@ st.set_page_config(
 # ----------------------------------
 # Load Model
 # ----------------------------------
+
 model = joblib.load("emotion_model.pkl")
 vectorizer = joblib.load("bow_vectorizer.pkl")
 
 # ----------------------------------
 # Emotion Mapping
 # ----------------------------------
+
 emotion_map = {
     0: ("😢", "Sadness"),
     1: ("😡", "Anger"),
@@ -31,68 +35,99 @@ emotion_map = {
 # ----------------------------------
 # Custom CSS
 # ----------------------------------
+
 st.markdown("""
 <style>
 
 .stApp{
-background:linear-gradient(135deg,#141E30,#243B55);
+background:linear-gradient(135deg,#0f172a,#1e293b,#334155);
 }
 
 .title{
-font-size:42px;
+text-align:center;
+font-size:44px;
 font-weight:bold;
 color:white;
-text-align:center;
 }
 
 .subtitle{
-font-size:18px;
-color:#dddddd;
 text-align:center;
-margin-bottom:25px;
+font-size:18px;
+color:#cbd5e1;
+margin-bottom:30px;
 }
 
 .result-box{
 background:white;
-padding:20px;
-border-radius:15px;
+padding:25px;
+border-radius:18px;
 text-align:center;
-font-size:30px;
-font-weight:bold;
-color:#0f172a;
-box-shadow:0px 0px 15px rgba(0,0,0,0.3);
+box-shadow:0px 5px 20px rgba(0,0,0,.3);
 margin-top:20px;
+}
+
+.result-box h1{
+color:#1e293b;
+font-size:40px;
+}
+
+.result-box h2{
+color:#2563eb;
 }
 
 .footer{
 text-align:center;
 color:white;
 margin-top:40px;
+font-size:16px;
 }
 
 .stButton>button{
-background:#00B4DB;
-background-image:linear-gradient(to right,#0083B0,#00B4DB);
-color:white;
+width:100%;
+height:55px;
 font-size:18px;
 font-weight:bold;
-border-radius:10px;
-height:50px;
-width:100%;
+border-radius:12px;
+background:linear-gradient(to right,#2563eb,#06b6d4);
+color:white;
 border:none;
 }
 
 .stButton>button:hover{
-background:#0077a6;
+background:linear-gradient(to right,#1d4ed8,#0891b2);
 color:white;
-}
-
-textarea{
-font-size:18px !important;
 }
 
 </style>
 """, unsafe_allow_html=True)
+
+# ----------------------------------
+# Sidebar
+# ----------------------------------
+
+st.sidebar.title("📌 Project Information")
+
+st.sidebar.success("Emotion Sentiment Analysis")
+
+st.sidebar.write("### Model Details")
+
+st.sidebar.write("""
+- **Algorithm:** Logistic Regression
+- **Vectorizer:** Bag of Words
+- **Accuracy:** 88%
+- **Classes:** 6
+""")
+
+st.sidebar.markdown("---")
+
+st.sidebar.write("### Try These Examples")
+
+st.sidebar.code("I got selected in my interview.")
+st.sidebar.code("I love my parents.")
+st.sidebar.code("I am very angry.")
+st.sidebar.code("I lost my wallet.")
+st.sidebar.code("I am scared of snakes.")
+st.sidebar.code("Wow! I can't believe it!")
 
 # ----------------------------------
 # Title
@@ -129,26 +164,91 @@ if st.button("🚀 Predict Emotion"):
 
         emoji, emotion = emotion_map[int(prediction)]
 
-        st.markdown(
-            f"<div class='result-box'>{emoji}<br>{emotion}</div>",
-            unsafe_allow_html=True
-        )
+        st.markdown(f"""
+        <div class='result-box'>
+        <h1>{emoji}</h1>
+        <h2>{emotion}</h2>
+        <p><b>The model predicts that the given text expresses <span style='color:#2563eb'>{emotion}</span>.</b></p>
+        </div>
+        """, unsafe_allow_html=True)
 
         if hasattr(model, "predict_proba"):
 
-            confidence = model.predict_proba(vector).max() * 100
+            probs = model.predict_proba(vector)[0]
 
-            st.write("### Confidence Score")
+            confidence = probs.max() * 100
+
+            st.write("## 📊 Confidence Score")
 
             st.progress(int(confidence))
 
             st.success(f"{confidence:.2f}%")
 
+            st.write("## 📈 Emotion Probabilities")
+
+            labels = [
+                "😢 Sadness",
+                "😡 Anger",
+                "❤️ Love",
+                "😲 Surprise",
+                "😨 Fear",
+                "😊 Joy"
+            ]
+
+            df = pd.DataFrame({
+                "Emotion": labels,
+                "Probability (%)": (probs * 100).round(2)
+            })
+
+            st.dataframe(df, use_container_width=True)
+
+# ----------------------------------
+# About Project
+# ----------------------------------
+
+with st.expander("📖 About This Project"):
+
+    st.write("""
+### Emotion Sentiment Analysis using NLP
+
+This project predicts emotions from text using
+Natural Language Processing (NLP).
+
+### Tech Stack
+
+- Python
+- Scikit-Learn
+- Bag of Words
+- Logistic Regression
+- Streamlit
+
+### Supported Emotions
+
+- 😊 Joy
+- 😢 Sadness
+- 😡 Anger
+- 😨 Fear
+- ❤️ Love
+- 😲 Surprise
+
+### Model Accuracy
+
+**88%**
+""")
+
 # ----------------------------------
 # Footer
 # ----------------------------------
 
-st.markdown(
-"<div class='footer'>Developed by Mohd Nasrullah Siddiqui ❤️</div>",
-unsafe_allow_html=True
-)
+st.markdown("""
+<hr>
+<div class='footer'>
+
+Made with ❤️ using Streamlit
+
+<br><br>
+
+<b>Developed by Mohd Nasrullah Siddiqui</b>
+
+</div>
+""", unsafe_allow_html=True)
