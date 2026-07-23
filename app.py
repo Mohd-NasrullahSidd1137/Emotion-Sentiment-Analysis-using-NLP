@@ -48,6 +48,47 @@ background:linear-gradient(135deg,#0F172A,#1E293B,#334155);
 TITLE
 =========================== */
 
+/* Sidebar Text */
+
+[data-testid="stSidebar"] * {
+    color: black !important;
+}
+
+/* Expander Text */
+
+.streamlit-expanderHeader {
+    color: white !important;
+    font-weight: bold;
+}
+
+.streamlit-expanderContent {
+    color: white !important;
+}
+
+/* Markdown Text */
+
+.stMarkdown {
+    color: white !important;
+}
+
+/* Lists */
+
+ul, li {
+    color: white !important;
+}
+
+/* Table */
+
+table, th, td {
+    color: white !important;
+}
+
+/* DataFrame */
+
+[data-testid="stDataFrame"] {
+    color: black !important;
+}
+
 .title{
 text-align:center;
 font-size:55px;
